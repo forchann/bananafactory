@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banana Factory</title>
+<meta name="description" content="Un incrémental de plantation de bananes : cliquez, automatisez, débloquez des minijeux et collectionnez 54 bananes rares.">
+<link rel="icon" id="favicon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="boot" class="boot">
+  <div class="boot-inner">
+    <div class="boot-banana" aria-hidden="true">🍌</div>
+    <h1>BANANA FACTORY</h1>
+    <p class="boot-sub" id="boot-sub">Chargement de la plantation…</p>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <img data-asset="assets/misc/banana_hero.png" alt="" class="brand-icon">
+    <span class="brand-text">Banana&nbsp;Factory</span>
+  </div>
+
+  <div class="resources">
+    <div class="res res-bananas" title="Bananes en stock">
+      <img data-asset="assets/misc/banana_hero.png" alt="Bananes">
+      <div>
+        <b id="res-bananas">0</b>
+        <small id="res-bps">0 / s</small>
+      </div>
+    </div>
+    <div class="res res-tokens hidden" id="res-tokens-box" title="Jetons d'arcade">
+      <img data-asset="assets/misc/token.png" alt="Jetons">
+      <div><b id="res-tokens">0</b><small>jetons</small></div>
+    </div>
+    <div class="res res-seeds hidden" id="res-seeds-box" title="Graines d'Or">
+      <img data-asset="assets/misc/seed_gold.png" alt="Graines">
+      <div><b id="res-seeds">0</b><small id="res-seeds-mult">×1,00</small></div>
+    </div>
+  </div>
+
+  <div class="boosts" id="boosts"></div>
+</header>
+
+<main class="layout">
+
+  <!-- ------------------------------------------------ COLONNE CLIC -->
+  <section class="clicker" id="clicker">
+    <div class="clicker-stage" id="clicker-stage">
+      <button class="banana-btn" id="banana-btn" aria-label="Récolter une banane">
+        <img data-asset="assets/misc/banana_hero.png" alt="Banane" id="banana-img" draggable="false">
+      </button>
+      <div class="fx-layer" id="fx-layer" aria-hidden="true"></div>
+    </div>
+
+    <div class="clicker-info">
+      <div class="per-click">
+        <span class="label">Par clic</span>
+        <b id="per-click">1</b>
+      </div>
+      <div class="combo hidden" id="combo-box">
+        <div class="combo-head"><span>Combo</span><b id="combo-mult">×1,00</b></div>
+        <div class="bar"><i id="combo-bar"></i></div>
+      </div>
+    </div>
+
+    <div class="smoothies hidden" id="smoothies"></div>
+
+    <div class="clicker-tips" id="clicker-tip"></div>
+  </section>
+
+  <!-- ------------------------------------------------ COLONNE PANNEAU -->
+  <section class="panel">
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="tab-body" id="tab-body"></div>
+  </section>
+
+</main>
+
+<div class="golden-layer" id="golden-layer" aria-hidden="true"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div class="modal-backdrop hidden" id="modal-backdrop">
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<script src="js/assets.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/util.js"></script>
+<script src="js/data-generators.js"></script>
+<script src="js/data-rares.js"></script>
+<script src="js/data-features.js"></script>
+<script src="js/data-upgrades.js"></script>
+<script src="js/data-challenges.js"></script>
+<script src="js/data-relics.js"></script>
+<script src="js/game.js"></script>
+<script src="js/minigames.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
