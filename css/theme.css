@@ -1,0 +1,443 @@
+/* ============================================================
+   Banana Factory — habillage « Grand Patch »
+   Chargé APRÈS css/style.css : cette feuille enrichit le thème
+   d'origine (fond de canopée, panneaux plus profonds) et apporte
+   les composants des systèmes ajoutés — nurserie, casino, skins.
+   ============================================================ */
+
+:root {
+  /* Deux raretés de bananes au-dessus de Mythique */
+  --r-cosmique: #4de2d0;
+  --r-absolue:  #fff1a8;
+
+  /* Paliers d'animaux de compagnie */
+  --p-commun:     #9fb8a2;
+  --p-rare:       #6ec6ff;
+  --p-epique:     #b866ff;
+  --p-legendaire: #ffa32e;
+  --p-mythique:   #ff4d6d;
+  --p-divin:      #4de2d0;
+  --p-primordial: #fff1a8;
+
+  --glass: rgba(10, 26, 16, .72);
+  --edge:  rgba(255, 210, 63, .16);
+}
+
+/* ------------------------------------------------------------------ FOND */
+
+/*
+ * Le décor de canopée est injecté par js/main.js dans --page-bg (il passe par
+ * ASSETS.resolve pour fonctionner aussi quand les PNG viennent du réseau).
+ * Il reste fixe derrière la page, assombri pour que le texte porte.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--page-bg, none);
+  background-size: cover;
+  background-position: center 20%;
+  image-rendering: pixelated;
+  opacity: .8;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 210, 63, .12), transparent 55%),
+    linear-gradient(180deg, rgba(6, 20, 12, .30) 0%, rgba(6, 18, 11, .62) 55%, rgba(4, 14, 9, .80) 100%);
+}
+
+body { background-attachment: fixed; }
+
+/* --------------------------------------------------------------- BANDEAU */
+
+.topbar {
+  background:
+    linear-gradient(180deg, rgba(122, 79, 43, .96), rgba(58, 36, 20, .97));
+  border-bottom: var(--px) solid var(--wood-line);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, .45), 0 10px 26px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(3px);
+}
+
+.brand-text {
+  background: linear-gradient(180deg, #fff29a, #ffb547);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 0 var(--wood-line));
+}
+
+.res {
+  background: rgba(0, 0, 0, .42);
+  border-color: rgba(0, 0, 0, .8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+/* --------------------------------------------------------- PANNEAUX */
+
+.clicker,
+.panel {
+  background: linear-gradient(180deg, var(--glass), rgba(6, 16, 10, .92));
+  border-color: rgba(0, 0, 0, .55);
+  box-shadow:
+    inset 0 0 0 2px var(--edge),
+    0 8px 0 rgba(0, 0, 0, .35),
+    0 18px 40px rgba(0, 0, 0, .45);
+  backdrop-filter: blur(4px);
+}
+
+.clicker-stage {
+  border-radius: 6px;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, .55);
+}
+
+/* Halo doux derrière la banane principale */
+.clicker-stage::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 240px; height: 240px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 210, 63, .22), transparent 68%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tabs {
+  background: linear-gradient(180deg, rgba(122, 79, 43, .9), rgba(58, 36, 20, .92));
+}
+
+.tab.active {
+  background: linear-gradient(180deg, #a06a3a, #7a4f2b);
+  box-shadow: inset 0 -3px 0 var(--banana), 0 -2px 10px rgba(255, 210, 63, .2);
+}
+
+.card {
+  border-radius: 5px;
+  transition: transform .1s ease, background .12s ease, border-color .12s ease;
+}
+.card.affordable { box-shadow: inset 2px 0 0 var(--leaf); }
+
+.section-head h2 {
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .5);
+}
+
+/* ------------------------------------------------- NOUVELLES RARETÉS */
+
+.t-cosmique { color: var(--r-cosmique); }
+.t-absolue  { color: var(--r-absolue); }
+
+.rare-cell.r-cosmique { border-color: var(--r-cosmique); box-shadow: 0 0 0 1px rgba(77, 226, 208, .35) inset; }
+.rare-cell.r-absolue  { border-color: var(--r-absolue);  box-shadow: 0 0 0 1px rgba(255, 241, 168, .45) inset; }
+
+.rare-cell.r-cosmique:not(.unknown),
+.rare-cell.r-absolue:not(.unknown) {
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+.rare-cell.r-absolue:not(.unknown) {
+  box-shadow: 0 0 14px rgba(255, 241, 168, .4), 0 0 0 1px rgba(255, 241, 168, .5) inset;
+}
+
+/* ---------------------------------------------------- AURAS DES SKINS */
+
+.banana-btn.aura-or      { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 18px rgba(255, 210, 63, .8)); }
+.banana-btn.aura-feu     { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 18px rgba(255, 110, 40, .85)); }
+.banana-btn.aura-givre   { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 18px rgba(120, 210, 255, .85)); }
+.banana-btn.aura-spectre { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 20px rgba(160, 220, 255, .6)); opacity: .88; }
+.banana-btn.aura-neon    { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 16px rgba(255, 90, 200, .9)); }
+.banana-btn.aura-prisme  { animation: prisme 5s linear infinite; }
+
+@keyframes prisme {
+  0%   { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 16px rgba(255, 90, 120, .8)); }
+  33%  { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 16px rgba(120, 255, 150, .8)); }
+  66%  { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 16px rgba(120, 170, 255, .8)); }
+  100% { filter: drop-shadow(0 6px 0 rgba(0,0,0,.4)) drop-shadow(0 0 16px rgba(255, 90, 120, .8)); }
+}
+
+/* ============================================================ NURSERIE */
+
+.t-pet-commun     { color: var(--p-commun); }
+.t-pet-rare       { color: var(--p-rare); }
+.t-pet-epique     { color: var(--p-epique); }
+.t-pet-legendaire { color: var(--p-legendaire); }
+.t-pet-mythique   { color: var(--p-mythique); }
+.t-pet-divin      { color: var(--p-divin); }
+.t-pet-primordial { color: var(--p-primordial); }
+
+.rare-cell.r-pet-commun     { border-color: var(--p-commun); }
+.rare-cell.r-pet-rare       { border-color: var(--p-rare); }
+.rare-cell.r-pet-epique     { border-color: var(--p-epique); }
+.rare-cell.r-pet-legendaire { border-color: var(--p-legendaire); }
+.rare-cell.r-pet-mythique   { border-color: var(--p-mythique); }
+.rare-cell.r-pet-divin      { border-color: var(--p-divin); }
+.rare-cell.r-pet-primordial { border-color: var(--p-primordial); }
+
+.rare-cell.r-pet-divin:not(.unknown),
+.rare-cell.r-pet-primordial:not(.unknown) { animation: shimmer 2.4s ease-in-out infinite; }
+
+.pet-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, .3);
+  border: 2px solid var(--wood-line);
+  border-left-width: 4px;
+  border-radius: 5px;
+}
+.pet-card.picked { background: rgba(255, 210, 63, .14); border-left-color: var(--banana); }
+.pet-card .pet-img { width: 46px; height: 46px; flex: 0 0 46px; }
+.pet-main { flex: 1; min-width: 0; }
+.pet-main b { display: block; font-size: 13px; color: var(--cream); }
+.pet-actions { display: flex; flex-direction: column; gap: 4px; }
+
+.pet-card.t-pet-commun     { border-left-color: var(--p-commun); }
+.pet-card.t-pet-rare       { border-left-color: var(--p-rare); }
+.pet-card.t-pet-epique     { border-left-color: var(--p-epique); }
+.pet-card.t-pet-legendaire { border-left-color: var(--p-legendaire); }
+.pet-card.t-pet-mythique   { border-left-color: var(--p-mythique); }
+.pet-card.t-pet-divin      { border-left-color: var(--p-divin); }
+.pet-card.t-pet-primordial { border-left-color: var(--p-primordial); }
+
+.nest-card { align-items: stretch; }
+
+.fusion-bar {
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: rgba(184, 102, 255, .1);
+  border: 2px solid rgba(184, 102, 255, .38);
+  border-radius: 5px;
+}
+.fusion-line { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: 12px; }
+.fusion-line img { width: 30px; height: 30px; }
+.fusion-plus { color: var(--banana); font-weight: 800; font-size: 15px; }
+
+/* ============================================================== CASINO */
+
+.bet-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.bet-row .btn.active { background: var(--banana); color: var(--ink); box-shadow: 0 4px 0 var(--banana-lo); }
+.bet-label { font-size: 12px; color: #b9ae92; }
+
+.casino-nav { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+.casino-nav .tab { border-bottom: 2px solid var(--wood-line); border-radius: 4px; }
+
+.casino-out {
+  margin: 10px 0;
+  padding: 9px 11px;
+  text-align: center;
+  font-size: 13px; font-weight: 700;
+  background: rgba(0, 0, 0, .32);
+  border: 2px solid var(--wood-line);
+  border-radius: 4px;
+  color: #ddd0b2;
+}
+.casino-out.win  { color: #b7f08a; border-color: rgba(126, 200, 80, .55); background: rgba(126, 200, 80, .12); }
+.casino-out.lose { color: #ffb0b0; border-color: rgba(255, 90, 90, .45); background: rgba(255, 90, 90, .1); }
+
+/* Machine à sous */
+.slot-reels { display: flex; gap: 8px; justify-content: center; margin: 6px 0; }
+.slot-cell {
+  width: 78px; height: 92px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #2a1a10, #120a05);
+  border: 3px solid var(--wood-line);
+  border-radius: 6px;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, .8), inset 0 2px 0 rgba(255, 255, 255, .07);
+  overflow: hidden;
+}
+.slot-cell img { width: 56px; height: 56px; }
+.slot-cell.spin img { animation: reel-blur .06s linear infinite; }
+.slot-cell.win {
+  border-color: var(--banana);
+  box-shadow: inset 0 0 22px rgba(255, 210, 63, .5), 0 0 14px rgba(255, 210, 63, .55);
+}
+@keyframes reel-blur {
+  0%   { transform: translateY(-8px); opacity: .55; }
+  100% { transform: translateY(8px); opacity: .55; }
+}
+.pay-table {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px;
+  margin-top: 12px;
+}
+.pay-table div {
+  padding: 6px 8px; font-size: 11px; color: #b9ae92;
+  background: rgba(0, 0, 0, .28); border: 2px solid var(--wood-line); border-radius: 3px;
+}
+.pay-table b { display: block; font-size: 14px; color: var(--banana); }
+.pay-trio { display: flex; gap: 2px; margin-bottom: 3px; }
+.pay-trio img { width: 22px; height: 22px; }
+
+/* Roulette */
+.roulette-wrap {
+  position: relative;
+  width: 200px; height: 200px;
+  margin: 6px auto;
+}
+.roulette-wheel {
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .45));
+}
+.roulette-wheel.spinning { animation: roue-tourne 1.1s cubic-bezier(.16, .8, .28, 1) 1; }
+@keyframes roue-tourne {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(1080deg); }
+}
+.roulette-display {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 62px; height: 62px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: #fff;
+  background: #333; border: 4px solid var(--wood-line); border-radius: 50%;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, .75), 0 0 0 3px rgba(0, 0, 0, .4);
+}
+.roulette-display.c-rouge { background: #b8342c; }
+.roulette-display.c-noir  { background: #1a1a1a; }
+.roulette-display.c-vert  { background: #2f7a30; }
+
+/* 21 Bananes */
+.bj-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; flex-wrap: wrap; }
+.bj-label { min-width: 120px; font-size: 12px; font-weight: 700; color: var(--banana); }
+.bj-cards { display: flex; gap: 6px; flex-wrap: wrap; }
+.bj-card {
+  position: relative;
+  width: 48px; height: 72px;
+  /* Le sprite ne fournit que le cadre ouvragé : le corps ivoire de la carte
+     est peint ici, sinon le centre resterait transparent. */
+  background: linear-gradient(180deg, #fff6dc, #e9dcbb);
+  border-radius: 5px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .45);
+}
+.bj-card .bj-face {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; display: block;
+}
+.bj-card.dos { background: #3a2414; }
+.bj-rank {
+  position: absolute; left: 5px; top: 3px;
+  font-size: 15px; font-weight: 800; color: #17110a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+}
+.bj-rank.red { color: #b8342c; }
+.bj-suit {
+  position: absolute; right: 4px; bottom: 4px;
+  width: 20px; height: 20px;
+}
+
+/* Course de cochons */
+.pig-card { align-items: center; }
+.pig-portrait { width: 42px; height: 42px; flex: 0 0 42px; }
+
+/* ============================================================== SKINS */
+
+.skin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+.skin-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 8px;
+  text-align: center;
+  background: rgba(0, 0, 0, .3);
+  border: 2px solid var(--wood-line);
+  border-radius: 5px;
+  transition: transform .1s ease, border-color .12s ease;
+}
+.skin-cell:hover { transform: translateY(-2px); border-color: var(--banana-lo); }
+.skin-cell .skin-img { width: 68px; height: 68px; }
+.skin-cell b { font-size: 12px; color: var(--cream); }
+.skin-how { font-size: 10px; color: #9c8f74; line-height: 1.35; }
+.skin-cell.locked { opacity: .62; }
+.skin-cell.locked .skin-img { filter: grayscale(1) brightness(.55); }
+.skin-cell.active {
+  border-color: var(--banana);
+  background: rgba(255, 210, 63, .14);
+  box-shadow: 0 0 0 2px rgba(255, 210, 63, .25) inset;
+}
+.skin-cell.active .skin-how { color: var(--banana); font-weight: 700; }
+
+/* ================================================= MINIJEUX AJOUTÉS === */
+
+/* Bar à Smoothies */
+.bar-stage {
+  padding: 12px; min-height: 190px;
+  background-image: var(--bar-bg, none);
+  background-size: cover;
+  background-position: center bottom;
+  image-rendering: pixelated;
+}
+.bar-scene { display: flex; align-items: center; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.bar-glass {
+  width: 86px; height: 86px;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .45));
+  transition: transform .12s ease;
+}
+.bar-glass.full { transform: scale(1.1); filter: drop-shadow(0 0 14px rgba(255, 210, 63, .8)); }
+.bar-order { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.bar-cell {
+  width: 52px; height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, .35);
+  border: 2px solid var(--wood-line); border-radius: 5px;
+  opacity: .45;
+}
+.bar-cell img { width: 38px; height: 38px; }
+.bar-cell.done { opacity: 1; border-color: var(--leaf); background: rgba(126, 200, 80, .18); }
+.bar-progress { margin-top: 12px; }
+.bar-pad { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)); gap: 7px; margin-top: 10px; }
+.bar-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 9px 4px; font-size: 11px; font-weight: 700; color: var(--cream);
+  background: rgba(0, 0, 0, .3);
+  border: 2px solid var(--wood-line); border-radius: 5px;
+}
+.bar-btn img { width: 34px; height: 34px; }
+.bar-btn:hover { background: rgba(255, 210, 63, .16); }
+.bar-btn:active { transform: translateY(2px); }
+
+/* Chasse aux Chapardeurs */
+.mole-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  padding: 12px;
+  /* Sans plafond, les neuf trous occupent toute la largeur du panneau et la
+     grille devient plus haute que l'écran. */
+  max-width: 420px;
+  margin: 0 auto;
+}
+.mole-hole {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: #1b3a24;
+  border: 3px solid var(--wood-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.mole-ground {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+.mole-actor {
+  position: relative; z-index: 2;
+  width: 70%; height: 70%;
+  margin-bottom: 6%;
+  transform: translateY(115%);
+  transition: transform .12s ease-out;
+}
+.mole-hole.up .mole-actor { transform: translateY(0); }
+.mole-hole.thief { box-shadow: inset 0 0 0 3px rgba(255, 90, 90, .35); }
+.mole-hole.friend { box-shadow: inset 0 0 0 3px rgba(126, 200, 80, .35); }
+.mole-hole.hit { filter: brightness(1.7); }
+
+/* ------------------------------------------------------------ MOBILE */
+
+@media (max-width: 620px) {
+  .slot-cell { width: 60px; height: 74px; font-size: 30px; }
+  .roulette-display { width: 86px; height: 86px; font-size: 32px; }
+  .skin-grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+  .skin-cell .skin-img { width: 54px; height: 54px; }
+  .bj-label { min-width: 100%; }
+  body::before { background-position: center center; }
+}

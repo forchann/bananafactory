@@ -28,7 +28,7 @@
       id: 'rares', name: 'Loupe du Botaniste', icon: 'assets/upgrades/loupe.png',
       cost: 4000, kind: 'collection',
       short: 'Bananes rares & Album',
-      desc: "Vous savez enfin reconnaître les spécimens rares. 54 bananes uniques " +
+      desc: "Vous savez enfin reconnaître les spécimens rares. 108 bananes uniques " +
             "à dénicher, chacune offrant un bonus permanent. L'Album s'ouvre.",
       req: function (S) { return S.gens.plantation >= 3; }
     },

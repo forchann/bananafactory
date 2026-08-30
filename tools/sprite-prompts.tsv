@@ -1,0 +1,195 @@
+# Prompts des 192 sprites ajoutés par le Grand Patch.
+# Colonnes : destination <TAB> largeurxhauteur <TAB> description envoyée à PixelLab.
+# Sert à régénérer l'illustration du patch de façon reproductible.
+assets/rares/lunettes.png	64x64	banana wearing round nerd eyeglasses and holding a small book
+assets/rares/moustache.png	64x64	banana with a big curly black handlebar moustache
+assets/rares/chapeau.png	64x64	banana wearing a wide straw sun hat with a red ribbon
+assets/rares/sportive.png	64x64	banana wearing a red sport headband and running sneakers, athletic
+assets/rares/endormie.png	64x64	sleeping banana wearing a blue nightcap with zzz bubbles
+assets/rares/confite.png	64x64	candied banana glazed in shiny sugar crystals and syrup
+assets/rares/grillee.png	64x64	grilled banana with dark char stripes and rising smoke
+assets/rares/tricotee.png	64x64	banana wearing a cozy knitted wool sweater and striped scarf
+assets/rares/bulle.png	64x64	banana floating inside a big iridescent soap bubble
+assets/rares/ressort.png	64x64	banana shaped like a coiled metal spring, bouncing
+assets/rares/cyber.png	64x64	banana covered in glowing blue neon circuit lines, cyborg, sparks
+assets/rares/mage.png	64x64	banana wearing a wizard hat and holding a magic wand, purple stars
+assets/rares/viking.png	64x64	banana wearing a horned viking helmet and holding a round wooden shield
+assets/rares/detective.png	64x64	banana wearing a detective deerstalker hat holding a magnifying glass
+assets/rares/chef.png	64x64	banana wearing a tall white chef toque hat and holding a wooden spoon
+assets/rares/surfeuse.png	64x64	banana riding a surfboard on a wave wearing sunglasses
+assets/rares/pompier.png	64x64	banana wearing a red firefighter helmet holding a water hose
+assets/rares/docteur.png	64x64	banana wearing a white doctor lab coat and a stethoscope
+assets/rares/rockeuse.png	64x64	banana playing a red electric guitar with spiky punk hair and sunglasses
+assets/rares/cowboy.png	64x64	banana wearing a brown cowboy hat holding a rope lasso, western
+assets/rares/geisha.png	64x64	banana wearing a pink japanese kimono holding a cherry blossom fan
+assets/rares/alchimique.png	64x64	banana inside a glass laboratory flask with bubbling green potion
+assets/rares/mecha.png	64x64	giant robot mecha banana with grey metal armor plates and glowing thrusters
+assets/rares/pharaon.png	64x64	banana wearing a golden egyptian pharaoh headdress with hieroglyphs
+assets/rares/yeti.png	64x64	banana covered in thick shaggy white yeti fur with icicles and snow
+assets/rares/kraken.png	64x64	banana with purple octopus tentacles, sea monster
+assets/rares/dinosaure.png	64x64	banana with green dinosaur scales, back spikes and tiny t-rex arms
+assets/rares/neon.png	64x64	banana made of glowing pink and cyan neon tubes
+assets/rares/magma.png	64x64	banana made of molten lava with glowing orange cracks and dripping magma
+assets/rares/sable.png	64x64	banana made of flowing golden desert sand pouring like an hourglass
+assets/rares/porcelaine.png	64x64	white porcelain banana with delicate blue painted patterns and gold repair cracks
+assets/rares/papillon.png	64x64	banana with large colorful butterfly wings
+assets/rares/orage.png	64x64	banana inside a dark storm cloud with yellow lightning bolts and rain
+assets/rares/grimoire.png	64x64	banana shaped like an ancient spellbook with runes and open pages
+assets/rares/seraphin.png	64x64	banana with white feathered angel wings and a golden halo
+assets/rares/demon.png	64x64	dark red banana with demon horns, bat wings and a small trident
+assets/rares/kitsune.png	64x64	banana with nine glowing white fox tails and a japanese fox mask
+assets/rares/aurore.png	64x64	banana glowing with green and purple northern lights aurora and stars
+assets/rares/obsidienne.png	64x64	black obsidian volcanic glass banana with sharp edges and red inner glow
+assets/rares/horloger.png	64x64	banana made of brass clockwork gears and cogs, steampunk
+assets/rares/abysse.png	64x64	deep sea anglerfish banana with a glowing lure antenna in dark water
+assets/rares/karma.png	64x64	banana floating in a golden zen mandala circle with lotus petals
+assets/rares/tornade.png	64x64	banana in the center of a swirling grey tornado funnel with debris
+assets/rares/sylvestre.png	64x64	banana made of living tree bark with leaves, moss and tiny flowers
+assets/rares/bigbang.png	64x64	banana exploding into a cosmic big bang with galaxies and light rays
+assets/rares/ouroboros.png	64x64	banana curved into a golden ouroboros snake eating its own tail
+assets/rares/paradoxe.png	64x64	impossible escher penrose banana, paradox geometry, optical illusion
+assets/rares/singularite.png	64x64	banana collapsing into a black hole singularity with a glowing event horizon
+assets/rares/genese.png	64x64	glowing seed of creation sprouting a tree of light, banana shaped
+assets/rares/multiversel.png	64x64	banana splitting into infinite mirrored parallel dimensions, prismatic
+assets/rares/entropie.png	64x64	banana dissolving into fractal dust particles and decaying entropy
+assets/rares/archetype.png	64x64	perfect banana made of white marble and pure light in a greek temple
+assets/rares/souveraine.png	64x64	supreme god emperor banana sitting on a cosmic throne wearing a crown of stars
+assets/rares/neant.png	64x64	banana made of pure void nothingness, silhouette swallowing all light
+assets/pets/singe.png	64x64	cute chibi baby monkey with big eyes, standing, game pet creature
+assets/pets/toucan.png	64x64	cute chibi toucan bird with a big colorful beak, game pet creature
+assets/pets/grenouille.png	64x64	cute chibi green tree frog with big eyes, game pet creature
+assets/pets/tortue.png	64x64	cute chibi baby turtle with a green shell, big eyes, game pet creature
+assets/pets/ecureuil.png	64x64	cute chibi squirrel with a big bushy tail, game pet creature
+assets/pets/chauvesouris.png	64x64	cute chibi purple bat with big ears and small wings, game pet creature
+assets/pets/lezard.png	64x64	cute chibi green lizard with big eyes, game pet creature
+assets/pets/papillon.png	64x64	cute chibi blue butterfly with big round wings, game pet creature
+assets/pets/crabe.png	64x64	cute chibi red crab with big claws and big eyes, game pet creature
+assets/pets/poussin.png	64x64	cute chibi yellow baby chick with big eyes, game pet creature
+assets/pets/herisson.png	64x64	cute chibi hedgehog with soft spikes and big eyes, game pet creature
+assets/pets/escargot.png	64x64	cute chibi snail with a swirly shell and big eyes, game pet creature
+assets/pets/rat.png	64x64	cute chibi grey rat with big ears and a long tail, game pet creature
+assets/pets/poisson.png	64x64	cute chibi orange tropical fish with big eyes, game pet creature
+assets/pets/paresseux.png	64x64	cute chibi sloth hanging with a sleepy smile, game pet creature
+assets/pets/perroquet.png	64x64	cute chibi red and blue macaw parrot, game pet creature
+assets/pets/capybara.png	64x64	cute chibi capybara with a calm face, game pet creature
+assets/pets/cameleon.png	64x64	cute chibi rainbow chameleon with curled tail and swivel eyes, game pet creature
+assets/pets/lemurien.png	64x64	cute chibi ring tailed lemur with big yellow eyes, game pet creature
+assets/pets/tatou.png	64x64	cute chibi armadillo rolled with armor plates, game pet creature
+assets/pets/fourmilier.png	64x64	cute chibi anteater with a long snout, game pet creature
+assets/pets/pangolin.png	64x64	cute chibi pangolin with golden scales, game pet creature
+assets/pets/axolotl.png	64x64	cute chibi pink axolotl with frilly gills, game pet creature
+assets/pets/ouistiti.png	64x64	cute chibi tiny marmoset monkey with white ear tufts, game pet creature
+assets/pets/colibri.png	64x64	cute chibi green hummingbird hovering, game pet creature
+assets/pets/piranha.png	64x64	cute chibi piranha fish with sharp teeth and big eyes, game pet creature
+assets/pets/jaguar.png	64x64	cute chibi spotted jaguar cub, game pet creature
+assets/pets/gorille.png	64x64	cute chibi silverback gorilla with crossed arms, game pet creature
+assets/pets/python.png	64x64	cute chibi green python snake coiled with big eyes, game pet creature
+assets/pets/aigle.png	64x64	cute chibi golden eagle with spread wings, game pet creature
+assets/pets/panthere.png	64x64	cute chibi black panther with glowing green eyes, game pet creature
+assets/pets/crocodile.png	64x64	cute chibi green crocodile with a toothy grin, game pet creature
+assets/pets/okapi.png	64x64	cute chibi okapi with striped legs and big eyes, game pet creature
+assets/pets/casoar.png	64x64	cute chibi cassowary bird with a blue neck and helmet crest, game pet creature
+assets/pets/scorpion.png	64x64	cute chibi black scorpion with a curled tail, game pet creature
+assets/pets/raie.png	64x64	cute chibi blue manta ray gliding with big eyes, game pet creature
+assets/pets/tigreblanc.png	64x64	cute chibi white tiger cub with blue eyes and black stripes, game pet creature
+assets/pets/phenix.png	64x64	cute chibi red phoenix bird with flaming feathers, game pet creature
+assets/pets/griffon.png	64x64	cute chibi griffin with an eagle head and lion body, wings spread, game pet creature
+assets/pets/licorne.png	64x64	cute chibi white unicorn with a rainbow mane and golden horn, game pet creature
+assets/pets/kirin.png	64x64	cute chibi kirin qilin with antlers scales and golden hooves, game pet creature
+assets/pets/basilic.png	64x64	cute chibi basilisk lizard king with a crown crest and green scales, game pet creature
+assets/pets/sphinx.png	64x64	cute chibi sphinx with a lion body and a pharaoh headdress, game pet creature
+assets/pets/cerbere.png	64x64	cute chibi three headed black puppy with red eyes, game pet creature
+assets/pets/dragon.png	64x64	cute chibi green jungle dragon with leafy wings, game pet creature
+assets/pets/hydre.png	64x64	cute chibi multi headed purple hydra serpent, game pet creature
+assets/pets/chimere.png	64x64	cute chibi chimera with a lion head goat body and snake tail, game pet creature
+assets/pets/leviathan.png	64x64	cute chibi sea leviathan serpent with blue scales and fins, game pet creature
+assets/pets/behemoth.png	64x64	cute chibi giant stone behemoth beast with rocky armor, game pet creature
+assets/pets/ziz.png	64x64	cute chibi giant storm bird with vast white wings and clouds, game pet creature
+assets/pets/quetzalcoatl.png	64x64	cute chibi feathered serpent quetzalcoatl with green plumes, game pet creature
+assets/pets/amaterasu.png	64x64	cute chibi white fox with nine tails glowing like the sun, game pet creature
+assets/pets/ganesha.png	64x64	cute chibi golden elephant with jewels and ornaments, game pet creature
+assets/pets/fenrir.png	64x64	cute chibi giant grey wolf with glowing blue eyes and broken chains, game pet creature
+assets/pets/yggdrasil.png	64x64	cute chibi tiny world tree spirit with glowing roots and golden leaves, game pet creature
+assets/pets/ouroboros.png	64x64	cute chibi golden serpent biting its own tail forming a ring, game pet creature
+assets/skins/doree.png	192x192	big shining solid gold banana, luxurious metallic
+assets/skins/tigre.png	192x192	big banana with orange and black tiger stripes
+assets/skins/pixel.png	192x192	big banana drawn in chunky retro 8 bit style, few colors
+assets/skins/glacee.png	192x192	big banana made of ice and frost with icicles, frozen blue
+assets/skins/lave.png	192x192	big banana made of molten lava with glowing cracks
+assets/skins/robot.png	192x192	big robotic banana made of chrome metal plates with glowing eye
+assets/skins/ninja.png	192x192	big banana wearing a black ninja mask and headband
+assets/skins/zombie.png	192x192	big rotten green zombie banana with stitches and one eye
+assets/skins/momie.png	192x192	big banana wrapped in egyptian mummy bandages with glowing eyes
+assets/skins/bonbon.png	192x192	big banana made of pink and white striped candy, glossy
+assets/skins/arlequin.png	192x192	big banana in a purple and gold harlequin jester costume with bells
+assets/skins/cristal.png	192x192	big translucent crystal banana made of cyan gemstone facets
+assets/skins/fantome.png	192x192	big translucent glowing ghost banana, spooky blue
+assets/skins/arcenciel.png	192x192	big banana with flowing rainbow colors across its peel
+assets/skins/dragon.png	192x192	big banana covered in green dragon scales with small wings and horns
+assets/skins/neon.png	192x192	big banana made of glowing pink and cyan neon tubes, synthwave
+assets/skins/royale.png	192x192	big banana wearing a golden royal crown and a red velvet cape
+assets/skins/galactique.png	192x192	big deep purple banana filled with stars and a spiral galaxy
+assets/generators/reacteur.png	80x80	futuristic quantum reactor machine with a glowing core, sci-fi
+assets/generators/nebuleuse.png	80x80	glowing purple space nebula cloud with banana shaped stars inside
+assets/generators/quasar.png	80x80	bright white quasar beam of light erupting from a spinning golden disc
+assets/generators/dyson.png	80x80	giant golden dyson sphere megastructure around a star, metal rings
+assets/generators/simulation.png	80x80	retro computer server tower simulating a green wireframe universe on its screen
+assets/generators/multivers.png	80x80	cosmic anvil forge hammering glowing parallel universes
+assets/generators/chronos.png	80x80	giant ornate brass clockwork engine with spinning gears and a glowing hourglass core
+assets/generators/conscience.png	80x80	giant glowing floating brain made of golden light and neurons
+assets/generators/origine.png	80x80	ancient giant golden tree of life with glowing roots
+assets/casino/slot.png	64x64	casino slot machine with banana symbols on the reels and a red lever
+assets/casino/roulette.png	64x64	casino roulette wheel icon seen at an angle with a white ball
+assets/casino/cartes.png	64x64	fan of playing cards showing an ace, poker cards
+assets/casino/cochon.png	64x64	cute pink racing pig running with a number bib and jockey helmet
+assets/casino/roue.png	128x128	roulette wheel seen from directly above, red black and green numbered pockets, wooden rim
+assets/casino/carte_dos.png	64x96	back of a playing card, ornate red and gold diamond pattern with border
+assets/casino/carte_face.png	64x96	ivory playing card with thick ornate golden border frame and rounded corners, empty middle
+assets/casino/suit_banane.png	32x32	small yellow banana card suit symbol, flat icon, centered
+assets/casino/suit_coeur.png	32x32	small red heart card suit symbol, flat icon, centered
+assets/casino/suit_pique.png	32x32	small black spade card suit symbol, flat icon, centered
+assets/casino/suit_trefle.png	32x32	small black clover club card suit symbol, flat icon, centered
+assets/casino/sym_banane.png	64x64	single yellow banana slot machine symbol icon, bold and centered
+assets/casino/sym_cerise.png	64x64	pair of red cherries with green stem, slot machine symbol icon
+assets/casino/sym_coco.png	64x64	brown coconut cut in half, slot machine symbol icon
+assets/casino/sym_cloche.png	64x64	golden bell with clapper, slot machine symbol icon
+assets/casino/sym_diamant.png	64x64	sparkling blue cut diamond gem, slot machine symbol icon
+assets/casino/sym_etoile.png	64x64	shining golden five pointed star, slot machine jackpot symbol icon
+assets/casino/pig1.png	64x64	pink racing pig running fast, side view, number 1 bib, cartoon
+assets/casino/pig2.png	64x64	orange racing pig running fast, side view, number 2 bib, cartoon
+assets/casino/pig3.png	64x64	purple racing pig running fast, side view, number 3 bib, cartoon
+assets/casino/pig4.png	64x64	green racing pig running fast, side view, number 4 bib, cartoon
+assets/casino/pig5.png	64x64	blue racing pig running fast, side view, number 5 bib, cartoon
+assets/casino/pig6.png	64x64	brown spotted racing pig running fast, side view, number 6 bib, cartoon
+assets/casino/piste.png	400x72	straight horizontal dirt running lane bordered by green grass, uniform across the whole width, side view, simple flat ground
+assets/casino/tapis.png	400x224	green casino felt table surface with golden ornate border pattern
+assets/minigames/mg_ninja.png	64x64	crossed katana swords slicing a banana in half, ninja headband, action slash
+assets/minigames/mg_serpent.png	64x64	green snake coiled in a spiral shape eating a banana, jungle vine
+assets/minigames/mg_pile.png	64x64	stack of wooden banana crates piled high, tower
+assets/minigames/mg_cocktail.png	64x64	tropical cocktail glass with banana slice, umbrella and cherry, tiki bar drink
+assets/minigames/mg_taupe.png	64x64	sneaky raccoon thief popping out of a hole in the ground holding a stolen banana
+assets/minigames/bombe.png	64x64	round black cartoon bomb with a burning fuse and spark
+assets/minigames/serpent_tete.png	32x32	green snake head with eyes and tongue, top down view, game sprite
+assets/minigames/serpent_corps.png	32x32	green snake body segment scales, top down view, game sprite
+assets/minigames/serpent_queue.png	32x32	green snake tail tip pointed, top down view, game sprite
+assets/minigames/herbe.png	64x64	seamless jungle grass ground texture tile, top down view
+assets/minigames/cageot_bleu.png	32x32	blue painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_jaune.png	32x32	yellow painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_violet.png	32x32	purple painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_orange.png	32x32	orange painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_vert.png	32x32	green painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_rouge.png	32x32	red painted wooden crate box with metal corners, front view, square
+assets/minigames/cageot_cyan.png	32x32	cyan turquoise painted wooden crate box with metal corners, front view, square
+assets/minigames/verre.png	64x64	tall tropical smoothie glass with straw and umbrella, empty, side view
+assets/minigames/comptoir.png	400x160	tropical tiki bar wooden counter with bamboo wall behind, side view interior
+assets/minigames/trou.png	64x64	round dark hole dug in green grass ground with dirt rim, top down view
+assets/minigames/raton.png	64x64	sneaky raccoon thief holding a stolen banana, front view, cartoon
+assets/upgrades/oeuf.png	64x64	speckled golden animal egg with glowing cracks sitting in a straw nest
+assets/upgrades/nurserie.png	64x64	wooden animal shelter hut with straw roof and a food bowl, cozy pet home
+assets/upgrades/fusion.png	64x64	glowing magical incubator machine with two spiral dna helixes merging inside glass
+assets/upgrades/couronne.png	64x64	ornate golden royal crown with banana shaped points and jewels
+assets/upgrades/boussole.png	64x64	old brass nautical compass with a glowing needle, explorer map tool
+assets/upgrades/clepsydre.png	64x64	ancient stone water clock clepsydra dripping glowing blue water
+assets/upgrades/banniere.png	64x64	hanging cloth banner flag with a golden banana emblem, medieval
+assets/upgrades/des.png	64x64	pair of ivory dice with black pips, gambling
+assets/misc/bg_canopee.png	400x224	lush tropical jungle canopy landscape at golden sunset, banana palm leaves, misty layered mountains, warm light rays

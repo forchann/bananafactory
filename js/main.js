@@ -14,12 +14,30 @@
     });
     var fav = U.qs('#favicon');
     if (fav) fav.href = global.ASSETS.resolve('assets/misc/banana_hero.png');
+    /*
+     * Une url() placée dans une variable CSS est résolue par rapport à la
+     * feuille de style qui l'utilise, pas par rapport au document : un chemin
+     * relatif partait donc chercher css/assets/… et tombait en 404. On passe
+     * une URL absolue, ce qui marche aussi pour les blob: et les URL distantes.
+     */
+    function cssUrl(path) {
+      return "url('" + new URL(global.ASSETS.resolve(path), location.href).href + "')";
+    }
+
     var stage = U.qs('#clicker-stage');
     if (stage) {
-      stage.style.setProperty('--stage-bg',
-        "url('" + global.ASSETS.resolve('assets/misc/bg_plantation.png') + "')");
+      stage.style.setProperty('--stage-bg', cssUrl('assets/misc/bg_plantation.png'));
       stage.classList.add('has-bg');
     }
+    /* Décor de canopée fixé derrière toute la page (css/theme.css). */
+    document.documentElement.style.setProperty('--page-bg', cssUrl('assets/misc/bg_canopee.png'));
+
+    /* applySprites() vient de remettre le sprite d'origine sur la grosse
+       banane : on efface le marqueur pour que l'apparence choisie soit
+       réappliquée au lieu d'être considérée comme déjà en place. */
+    var hero = U.qs('#banana-img');
+    if (hero) delete hero.dataset.skin;
+    if (global.UI && global.UI.applySkin) global.UI.applySkin();
   }
 
   /* Télécharge en tâche de fond ce qui manque, pour que la prochaine

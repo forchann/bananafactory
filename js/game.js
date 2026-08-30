@@ -3,7 +3,7 @@
   'use strict';
 
   var SAVE_KEY = 'bananafactory.save';
-  var SAVE_VERSION = 1;
+  var SAVE_VERSION = 2;
   var TICK_MS = 50;
 
   /* ====================================================== ÉTAT INITIAL === */
@@ -35,12 +35,27 @@
       contractStreak: 0,       // commandes honorées d'affilée
       contractNextAt: 0,
       settings: { autobuy: false, sfx: true, volume: 0.45, reduceFx: false, bulk: 1 },
+
+      /* --- extensions « Grand Patch » --- */
+      skins: { owned: { classique: true }, active: 'classique' },
+      pets: {
+        owned: [],          // { uid, id, born }
+        nextUid: 1,
+        team: [],           // uid des animaux actifs
+        nest: null,         // fusion en cours { a, b, result, until }
+        eggs: 0,
+        discovered: {}      // id d'espèce -> true (album de la Nurserie)
+      },
+
       stats: {
         clicks: 0, crits: 0, maxCombo: 0, goldenClicked: 0,
         miniPlayed: 0, miniByGame: {}, best: {},
         raresTotal: 0, upgradesBought: 0, gensBought: 0,
         contractsDone: 0, contractsFailed: 0, bestStreak: 0,
-        playTime: 0, startedAt: Date.now(), handClicked: 0
+        playTime: 0, startedAt: Date.now(), handClicked: 0,
+        casinoPlays: 0, casinoWins: 0, casinoBest: 0,
+        racesPlayed: 0, racesWon: 0,
+        petsHatched: 0, petsBred: 0
       },
       lastTick: Date.now(),
       lastSave: Date.now()
@@ -58,7 +73,8 @@
     critChance: 0.05, critMult: 12,
     luckMult: 1, tokenMult: 1, miniMult: 1, boostMult: 1,
     goldenMult: 1, offlineMult: 1, seedMult: 1,
-    comboMult: 1, raresFound: 0, genBps: {}
+    comboMult: 1, raresFound: 0, genBps: {},
+    seedPower: 0, casinoLuck: 0
   };
 
   /* ======================================================= ÉVÉNEMENTS === */
@@ -133,6 +149,45 @@
     return v;
   }
 
+  /* Bonus (%) venus des systèmes annexes : animaux de compagnie, etc. */
+  function extraBonus(type) {
+    var t = 0;
+    if (global.PETS && global.PETS.bonus) t += global.PETS.bonus(type);
+    return t;
+  }
+
+  /* ================================================ GRAINES D'OR ======== */
+
+  /*
+   * Rendements décroissants par tranches.
+   *
+   * Auparavant chaque graine donnait +2 % sans limite : passé quelques
+   * milliers de graines la production explosait et le reste du jeu n'avait
+   * plus d'intérêt. Les graines gardent tout leur poids au début (+2 % pièce
+   * sur les 25 premières) puis pèsent de moins en moins, ce qui étale la
+   * progression sur toute la partie au lieu de la faire basculer d'un coup.
+   */
+  var SEED_BANDS = [
+    { upTo: 25, per: 0.0200 },
+    { upTo: 100, per: 0.0120 },
+    { upTo: 300, per: 0.0070 },
+    { upTo: 1000, per: 0.0035 },
+    { upTo: Infinity, per: 0.0015 }
+  ];
+
+  function seedPower(seeds) {
+    var total = 0, done = 0;
+    for (var i = 0; i < SEED_BANDS.length && done < seeds; i++) {
+      var band = SEED_BANDS[i];
+      var take = Math.min(seeds, band.upTo) - done;
+      if (take > 0) { total += take * band.per; done += take; }
+    }
+    return total;
+  }
+
+  /* Ce que rapporterait la prochaine graine — sert à l'affichage. */
+  function seedMarginal(seeds) { return seedPower(seeds + 1) - seedPower(seeds); }
+
   function recompute() {
     var now = Date.now();
     D.raresFound = countRares();
@@ -145,7 +200,8 @@
       if (S.comboUntil <= now) S.combo = 0;
     }
 
-    D.prestigeMult = 1 + S.seeds * 0.02;
+    D.seedPower = seedPower(S.seeds);
+    D.prestigeMult = 1 + D.seedPower;
 
     /* Synergie collection : +x% de production par rare possédée */
     var synPerRare = upgradeSum('raresyn');
@@ -154,6 +210,7 @@
       upgradeValue('global') *
       (1 + rareBonus('prod') / 100) *
       (1 + relicBonus('prod') / 100) *
+      (1 + extraBonus('prod') / 100) *
       (1 + (synPerRare * D.raresFound) / 100) *
       D.prestigeMult *
       boostMultFor('prod');
@@ -162,18 +219,22 @@
       upgradeValue('click') *
       (1 + rareBonus('click') / 100) *
       (1 + relicBonus('click') / 100) *
+      (1 + extraBonus('click') / 100) *
       D.prestigeMult *
       boostMultFor('click') *
       D.comboMult;
 
-    D.luckMult = (1 + (upgradeSum('luck') + rareBonus('luck') + relicBonus('luck')) / 100) * boostMultFor('luck');
-    D.tokenMult = 1 + (upgradeSum('token') + rareBonus('token') + relicBonus('token')) / 100;
-    D.miniMult = 1 + (upgradeSum('mini') + rareBonus('mini') + relicBonus('mini')) / 100;
-    D.boostMult = 1 + (rareBonus('boost') + relicBonus('boost')) / 100;
-    D.goldenMult = 1 + (upgradeSum('golden') + rareBonus('golden') + relicBonus('golden')) / 100;
-    D.offlineMult = 1 + (upgradeSum('offline') + rareBonus('offline') + relicBonus('offline')) / 100;
-    D.seedMult = 1 + (rareBonus('seed') + relicBonus('seed')) / 100;
-    D.critChance = Math.min(0.75, 0.05 + (rareBonus('crit') + relicBonus('crit')) / 100);
+    D.luckMult = (1 + (upgradeSum('luck') + rareBonus('luck') + relicBonus('luck') + extraBonus('luck')) / 100) * boostMultFor('luck');
+    D.tokenMult = (1 + (upgradeSum('token') + rareBonus('token') + relicBonus('token') + extraBonus('token')) / 100) * boostMultFor('token');
+    D.miniMult = (1 + (upgradeSum('mini') + rareBonus('mini') + relicBonus('mini') + extraBonus('mini')) / 100) * boostMultFor('mini');
+    D.boostMult = 1 + (rareBonus('boost') + relicBonus('boost') + extraBonus('boost')) / 100;
+    D.goldenMult = 1 + (upgradeSum('golden') + rareBonus('golden') + relicBonus('golden') + extraBonus('golden')) / 100;
+    D.offlineMult = 1 + (upgradeSum('offline') + rareBonus('offline') + relicBonus('offline') + extraBonus('offline')) / 100;
+    D.seedMult = 1 + (rareBonus('seed') + relicBonus('seed') + extraBonus('seed')) / 100;
+    D.critChance = Math.min(0.75, 0.05 + (rareBonus('crit') + relicBonus('crit') + extraBonus('crit')) / 100);
+    /* Chance au casino : réduit (un peu) l'avantage de la maison, jamais plus. */
+    D.casinoLuck = (upgradeSum('casino') + rareBonus('casino') +
+                    relicBonus('casino') + extraBonus('casino')) / 100;
 
     /* Production par seconde */
     var raw = 0;
@@ -207,6 +268,21 @@
     if (S.bananas < amount) return false;
     S.bananas -= amount;
     return true;
+  }
+
+  /*
+   * Gains qui ne comptent PAS dans le total de la partie.
+   *
+   * Les mises du casino sont retirées par spend(), qui ne touche pas à
+   * totalBananas : si les gains passaient par earn(), miser en boucle ferait
+   * grimper le total — et donc les Graines d'Or — sans rien produire.
+   */
+  function payout(amount) {
+    if (!(amount > 0)) return 0;
+    S.bananas += amount;
+    S.allTime += amount;
+    emit('earn', { amount: amount, source: 'casino' });
+    return amount;
   }
 
   function addTokens(n, silent) {
@@ -305,7 +381,9 @@
     { id: 'mut1', cost: 30, min: null, label: 'Mutation aléatoire' },
     { id: 'mut2', cost: 110, min: 'rare', label: 'Rare ou mieux garanti' },
     { id: 'mut3', cost: 350, min: 'epique', label: 'Épique ou mieux garanti' },
-    { id: 'mut4', cost: 1100, min: 'legendaire', label: 'Légendaire ou mieux garanti' }
+    { id: 'mut4', cost: 1100, min: 'legendaire', label: 'Légendaire ou mieux garanti' },
+    { id: 'mut5', cost: 4200, min: 'mythique', label: 'Mythique ou mieux garanti' },
+    { id: 'mut6', cost: 16000, min: 'cosmique', label: 'Cosmique garantie' }
   ];
 
   function mutate(id) {
@@ -414,8 +492,21 @@
     { id: 'token', name: 'Smoothie Doré', type: 'token', mult: 2, secs: 120,
       icon: 'assets/upgrades/mixeur.png', desc: "Jetons gagnés ×2", ratio: 600 },
     { id: 'luck', name: 'Smoothie Chanceux', type: 'luck', mult: 4, secs: 90,
-      icon: 'assets/upgrades/mixeur.png', desc: "Chance de trouver une rare ×4", ratio: 900 }
+      icon: 'assets/upgrades/mixeur.png', desc: "Chance de trouver une rare ×4", ratio: 900 },
+
+    /* --- recettes débloquées par la Cave à Smoothies (Grand Patch) --- */
+    { id: 'mega', name: 'Smoothie Titanesque', type: 'prod', mult: 25, secs: 45,
+      icon: 'assets/upgrades/mixeur.png', desc: "Production globale ×25", ratio: 2600, deluxe: true },
+    { id: 'fureur', name: 'Smoothie Fureur', type: 'click', mult: 45, secs: 25,
+      icon: 'assets/upgrades/mixeur.png', desc: "Puissance de clic ×45", ratio: 2000, deluxe: true },
+    { id: 'arcade', name: 'Smoothie Arcade', type: 'mini', mult: 3, secs: 150,
+      icon: 'assets/upgrades/mixeur.png', desc: "Récompenses de minijeu ×3", ratio: 1500, deluxe: true },
+    { id: 'fortune', name: 'Smoothie Fortune', type: 'luck', mult: 9, secs: 70,
+      icon: 'assets/upgrades/mixeur.png', desc: "Chance de trouver une rare ×9", ratio: 3400, deluxe: true }
   ];
+
+  /* Les recettes « deluxe » demandent la découverte Cave à Smoothies. */
+  function smoothieAvailable(sm) { return !sm.deluxe || !!S.features.smoothies2; }
 
   function smoothieCost(sm) {
     return Math.max(25000, D.bps * sm.ratio);
@@ -424,7 +515,7 @@
   function craftSmoothie(id) {
     var sm = null;
     for (var i = 0; i < SMOOTHIES.length; i++) if (SMOOTHIES[i].id === id) sm = SMOOTHIES[i];
-    if (!sm || !S.features.boosts) return false;
+    if (!sm || !S.features.boosts || !smoothieAvailable(sm)) return false;
     if ((S.smoothies[id] || 0) >= 9) return false;
     if (!spend(smoothieCost(sm))) return false;
     S.smoothies[id] = (S.smoothies[id] || 0) + 1;
@@ -457,7 +548,10 @@
     { id: 'rain', name: "Pluie d'Or", weight: 22, text: "Un gros paquet de bananes, tout de suite" },
     { id: 'jackpot', name: 'Jackpot', weight: 14, text: "Une poignée de jetons" },
     { id: 'clover', name: 'Trèfle Doré', weight: 9, text: "Chance ×3 pendant 60 s" },
-    { id: 'treasure', name: 'Trésor Doré', weight: 3, text: "Une banane rare, offerte" }
+    { id: 'treasure', name: 'Trésor Doré', weight: 3, text: "Une banane rare, offerte" },
+    { id: 'storm', name: 'Tempête Dorée', weight: 8, text: "Production ×20 pendant 40 s" },
+    { id: 'egg', name: 'Œuf Doré', weight: 6, text: "Un œuf pour la Nurserie" },
+    { id: 'muse', name: 'Muse Dorée', weight: 5, text: "Récompenses de minijeu ×4 pendant 2 min" }
   ];
 
   function goldenDelay() {
@@ -484,6 +578,12 @@
       case 'treasure':
         var r = drawRare('rare');
         if (r) result.rare = grantRare(r.id, 'golden');
+        break;
+      case 'storm': addBoost('prod', 20, 40, 'Tempête Dorée'); break;
+      case 'muse': addBoost('mini', 4, 120, 'Muse Dorée'); break;
+      case 'egg':
+        S.pets.eggs = (S.pets.eggs || 0) + 1;
+        result.amount = 1;
         break;
     }
     S.nextGoldenAt = Date.now() + goldenDelay();
@@ -528,7 +628,8 @@
       var pool = [];
       for (var i = 0; i < global.RARES.length; i++) {
         var r = global.RARES[i];
-        if (r.source === 'defi' || r.source === 'prestige') continue;
+        if (r.source === 'defi' || r.source === 'prestige' ||
+            r.source === 'pet' || r.source === 'casino') continue;
         pool.push({ rare: r, weight: global.RARITY[r.rarity].weight * (S.rares[r.id] ? 0.3 : 1.4) });
       }
       var pick = global.U.weightedPick(pool);
@@ -545,9 +646,22 @@
 
   /* ======================================================== PRESTIGE ==== */
 
+  /*
+   * Le seuil et l'exposant ont été relevés en même temps que les rendements
+   * décroissants de seedPower() : une Grande Récolte reste gratifiante, mais
+   * elle ne double plus la partie à elle seule.
+   */
+  var SEED_THRESHOLD = 1e11;
+
   function seedsOnPrestige() {
-    if (S.totalBananas < 1e10) return 0;
-    return Math.floor(Math.pow(S.totalBananas / 1e10, 0.5) * D.seedMult);
+    if (S.totalBananas < SEED_THRESHOLD) return 0;
+    return Math.floor(Math.pow(S.totalBananas / SEED_THRESHOLD, 0.42) * D.seedMult);
+  }
+
+  /* Total de bananes nécessaire pour obtenir `n` graines d'un coup. */
+  function bananasForSeeds(n) {
+    if (n <= 0) return SEED_THRESHOLD;
+    return Math.pow(n / Math.max(0.0001, D.seedMult), 1 / 0.42) * SEED_THRESHOLD;
   }
 
   function canPrestige() { return S.features.prestige && seedsOnPrestige() >= 1; }
@@ -561,12 +675,17 @@
       prestigeCount: S.prestigeCount + 1,
       rares: S.rares, challenges: S.challenges, relics: S.relics,
       settings: S.settings, stats: S.stats, contractStreak: S.contractStreak,
+      /* La ménagerie et la garde-robe traversent les Grandes Récoltes. */
+      pets: S.pets, skins: S.skins,
       features: {}
     };
     /* Les découvertes « méta » et les minijeux restent débloqués */
     ['prestige', 'relics', 'automation', 'mg_roue', 'mg_tri', 'mg_peel', 'mg_memoire',
      'mg_match', 'mg_tresor', 'mg_course', 'rares', 'challenges', 'market', 'mutation',
-     'combo', 'crit', 'golden', 'boosts', 'contracts'].forEach(function (id) {
+     'combo', 'crit', 'golden', 'boosts', 'contracts',
+     'mg_ninja', 'mg_serpent', 'mg_pile', 'mg_cocktail', 'mg_taupe',
+     'skins', 'pets', 'breeding', 'casino', 'race',
+     'petteam2', 'petteam3', 'petteam4'].forEach(function (id) {
       if (S.features[id]) keep.features[id] = true;
     });
 
@@ -856,7 +975,11 @@
 
   /* ================================================== HORS-LIGNE ======== */
 
-  function maxOfflineHours() { return S.upgrades.syn_offline1 ? 12 : 8; }
+  function maxOfflineHours() {
+    if (S.upgrades.syn_offline3) return 48;
+    if (S.upgrades.syn_offline2) return 24;
+    return S.upgrades.syn_offline1 ? 12 : 8;
+  }
 
   function applyOffline(elapsedMs) {
     recompute();
@@ -878,8 +1001,31 @@
       prestigeCount: S.prestigeCount, gens: S.gens, upgrades: S.upgrades,
       features: S.features, rares: S.rares, relics: S.relics,
       raresFound: D.raresFound, bps: D.bps, stats: S.stats,
-      upgradesBought: S.stats.upgradesBought, relicLevels: relicLevels()
+      upgradesBought: S.stats.upgradesBought, relicLevels: relicLevels(),
+      /* --- extensions « Grand Patch » --- */
+      pets: S.pets, skins: S.skins,
+      petsOwned: S.pets.owned.length,
+      petSpecies: countKeys(S.pets.discovered),
+      petBestTier: bestPetTier(),
+      skinsOwned: countKeys(S.skins.owned)
     };
+  }
+
+  function countKeys(obj) {
+    var n = 0;
+    for (var k in obj) if (obj[k]) n++;
+    return n;
+  }
+
+  /* Rang (0 = commun) du plus rare animal jamais découvert. */
+  function bestPetTier() {
+    var best = -1;
+    for (var id in S.pets.discovered) {
+      if (!S.pets.discovered[id]) continue;
+      var sp = global.PET_BY_ID[id];
+      if (sp) best = Math.max(best, global.petTierIndex(sp.tier));
+    }
+    return best + 1;
   }
 
   /* ===================================================== SAUVEGARDE ===== */
@@ -915,6 +1061,20 @@
       if (typeof raw.gens[g.id] !== 'number') raw.gens[g.id] = 0;
     });
     if (!Array.isArray(raw.boosts)) raw.boosts = [];
+
+    /* Les blocs ajoutés par le Grand Patch peuvent manquer, ou n'être que
+       partiellement remplis si la sauvegarde date d'une version intermédiaire. */
+    ['pets', 'skins'].forEach(function (k) {
+      if (!raw[k] || typeof raw[k] !== 'object') raw[k] = fresh[k];
+      for (var sub in fresh[k]) {
+        if (raw[k][sub] === undefined) raw[k][sub] = fresh[k][sub];
+      }
+    });
+    if (!Array.isArray(raw.pets.owned)) raw.pets.owned = [];
+    if (!Array.isArray(raw.pets.team)) raw.pets.team = [];
+    if (!raw.skins.owned.classique) raw.skins.owned.classique = true;
+    if (!global.SKIN_BY_ID[raw.skins.active]) raw.skins.active = 'classique';
+
     raw.version = SAVE_VERSION;
     return raw;
   }
@@ -966,13 +1126,15 @@
     on: on, emit: emit,
     recompute: recompute, tick: tick,
     clickBanana: clickBanana,
-    earn: earn, spend: spend, addTokens: addTokens,
+    earn: earn, spend: spend, payout: payout, addTokens: addTokens,
     genCost: genCost, genMaxBuy: genMaxBuy, buyGen: buyGen,
     upgradeVisible: upgradeVisible, buyUpgrade: buyUpgrade,
     featureVisible: featureVisible, buyFeature: buyFeature,
     relicCost: relicCost, buyRelic: buyRelic, relicLevels: relicLevels,
-    SMOOTHIES: SMOOTHIES, smoothieCost: smoothieCost,
+    SMOOTHIES: SMOOTHIES, smoothieCost: smoothieCost, smoothieAvailable: smoothieAvailable,
     craftSmoothie: craftSmoothie, drinkSmoothie: drinkSmoothie, addBoost: addBoost,
+    seedPower: seedPower, seedMarginal: seedMarginal, bananasForSeeds: bananasForSeeds,
+    SEED_THRESHOLD: SEED_THRESHOLD,
     boostMultFor: boostMultFor,
     collectGolden: collectGolden, goldenDelay: goldenDelay, GOLDEN_KINDS: GOLDEN_KINDS,
     marketSell: marketSell, marketBuyOffer: marketBuyOffer, marketTokenRate: marketTokenRate,

@@ -28,7 +28,10 @@
 
   var MINIGAME_FEATURE = {
     tri: 'mg_tri', peel: 'mg_peel', memoire: 'mg_memoire',
-    match: 'mg_match', tresor: 'mg_tresor', course: 'mg_course', roue: 'mg_roue'
+    match: 'mg_match', tresor: 'mg_tresor', course: 'mg_course', roue: 'mg_roue',
+    /* --- Grand Patch --- */
+    ninja: 'mg_ninja', serpent: 'mg_serpent', pile: 'mg_pile',
+    cocktail: 'mg_cocktail', taupe: 'mg_taupe'
   };
 
   function anyMinigame(S) {
@@ -121,6 +124,23 @@
     active = id;
     renderTab();
     buildTabs();
+  }
+
+  /*
+   * Point d'extension utilisé par js/ui-extra.js : les onglets du Grand Patch
+   * s'enregistrent ici plutôt que d'être codés en dur dans TABS.
+   * `before` indique devant quel onglet existant s'insérer.
+   */
+  function registerTab(tab, builder, before) {
+    var at = TABS.length;
+    if (before) {
+      for (var i = 0; i < TABS.length; i++) {
+        if (TABS[i].id === before) { at = i; break; }
+      }
+    }
+    TABS.splice(at, 0, tab);
+    BUILDERS[tab.id] = builder;
+    lastTabSig = '';
   }
 
   function renderTab() {
@@ -530,7 +550,9 @@
         defi: "S'obtient en accomplissant un défi précis.",
         mini: "S'obtient principalement dans les minijeux.",
         marche: "Apparaît de temps en temps au Marché.",
-        prestige: "Récompense liée aux Grandes Récoltes."
+        prestige: "Récompense liée aux Grandes Récoltes.",
+        pet: "Se mérite à la Nurserie, en élevant les espèces les plus rares.",
+        casino: "Se gagne au Casino de la Canopée."
       }[r.source];
       body.appendChild(U.el('p', null, 'Piste : ' + src));
     }
@@ -903,13 +925,14 @@
         var gain = G.seedsOnPrestige();
         big.textContent = U.fmtFr(gain);
         sub.textContent = "Vous en possédez " + U.fmtFr(G.S.seeds) +
-          " (×" + (1 + G.S.seeds * 0.02).toFixed(2).replace('.', ',') + " de production)";
+          " (×" + G.D.prestigeMult.toFixed(2).replace('.', ',') + " de production)";
         stats.innerHTML = '';
         [
           ['Grandes Récoltes', G.S.prestigeCount],
           ['Bananes de cette partie', U.fmtFr(G.S.totalBananas)],
           ["Graines d'Or totales", U.fmtFr(G.S.totalSeeds)],
-          ['Seuil de la prochaine graine', U.fmtFr(Math.pow(gain + 1, 2) * 1e10)]
+          ['Seuil de la prochaine graine', U.fmtFr(G.bananasForSeeds(gain + 1))],
+          ['Apport de la prochaine graine', '+' + (G.seedMarginal(G.S.seeds) * 100).toFixed(2).replace('.', ',') + ' %']
         ].forEach(function (p) {
           var d = U.el('div');
           d.appendChild(U.el('b', null, String(p[1])));
@@ -1139,7 +1162,7 @@
 
     dom.seedsBox.classList.toggle('hidden', !S.features.prestige && S.seeds === 0);
     dom.seeds.textContent = U.fmtFr(S.seeds);
-    dom.seedsMult.textContent = '×' + (1 + S.seeds * 0.02).toFixed(2).replace('.', ',');
+    dom.seedsMult.textContent = '×' + D.prestigeMult.toFixed(2).replace('.', ',');
 
     /* Combo */
     var comboOn = S.features.combo && S.combo > 1 && S.comboUntil > Date.now();
@@ -1171,9 +1194,10 @@
     var on = !!G.S.features.boosts;
     dom.smoothies.classList.toggle('hidden', !on);
     if (!on) return;
-    if (dom.smoothies.children.length !== G.SMOOTHIES.length) {
+    var recipes = G.SMOOTHIES.filter(G.smoothieAvailable);
+    if (dom.smoothies.children.length !== recipes.length) {
       dom.smoothies.innerHTML = '';
-      G.SMOOTHIES.forEach(function (sm) {
+      recipes.forEach(function (sm) {
         var b = U.el('button', 'smoothie');
         b.appendChild(U.icon(sm.icon));
         var main = U.el('div');
@@ -1359,8 +1383,13 @@
       closeModal();
       var target = { mg_tri: 'arcade', mg_peel: 'arcade', mg_memoire: 'arcade', mg_match: 'arcade',
         mg_tresor: 'arcade', mg_course: 'arcade', mg_roue: 'arcade',
+        mg_ninja: 'arcade', mg_serpent: 'arcade', mg_pile: 'arcade',
+        mg_cocktail: 'arcade', mg_taupe: 'arcade',
         rares: 'album', challenges: 'defis', market: 'marche', relics: 'reliques',
-        prestige: 'recolte', mutation: 'album', contracts: 'contrats' }[f.id];
+        prestige: 'recolte', mutation: 'album', contracts: 'contrats',
+        skins: 'apparence', pets: 'nurserie', breeding: 'nurserie',
+        petteam2: 'nurserie', petteam3: 'nurserie', petteam4: 'nurserie',
+        casino: 'casino', race: 'casino' }[f.id];
       lastTabSig = '';
       if (target) switchTab(target);
       refreshAll();
@@ -1388,10 +1417,45 @@
     modal(body);
   }
 
+  /* ========================================================== SKINS ===== */
+
+  /* Applique l'apparence active à la grosse banane, et son aura éventuelle. */
+  function applySkin() {
+    if (!dom.bananaImg) return;
+    var skin = global.SKIN_BY_ID[G.S.skins.active] || global.SKIN_BY_ID.classique;
+    if (dom.bananaImg.dataset.skin !== skin.id) {
+      dom.bananaImg.dataset.skin = skin.id;
+      U.setSprite(dom.bananaImg, skin.icon);
+    }
+    var btn = dom.bananaBtn;
+    if (btn._aura !== skin.aura) {
+      if (btn._aura) btn.classList.remove('aura-' + btn._aura);
+      btn._aura = skin.aura || null;
+      if (btn._aura) btn.classList.add('aura-' + btn._aura);
+    }
+  }
+
+  /* Débloque les apparences dont la condition vient d'être remplie. */
+  function checkSkinUnlocks() {
+    if (!G.S.features.skins) return;
+    var snap = G.snapshot();
+    global.SKINS.forEach(function (s) {
+      if (G.S.skins.owned[s.id]) return;
+      var ok = false;
+      try { ok = s.req(snap); } catch (e) { ok = false; }
+      if (!ok) return;
+      G.S.skins.owned[s.id] = true;
+      toast('Nouvelle apparence', s.name + ' — ' + s.how, s.icon, 'gold');
+      sfx('feature');
+    });
+  }
+
   /* ======================================================== RAFRAÎCHIR = */
 
   function refreshAll() {
     G.recompute();
+    checkSkinUnlocks();
+    applySkin();
     refreshHeader();
     refreshSmoothies();
     buildTabs();
@@ -1423,6 +1487,7 @@
     dom.modal = U.qs('#modal');
     dom.goldenLayer = U.qs('#golden-layer');
     dom.bananaBtn = U.qs('#banana-btn');
+    dom.bananaImg = U.qs('#banana-img');
 
     function harvest() {
       var res = G.clickBanana(true);
@@ -1485,6 +1550,8 @@
 
   global.UI = {
     init: init,
+    registerTab: registerTab,
+    applySkin: applySkin,
     refreshAll: refreshAll,
     refreshHeader: refreshHeader,
     refreshTip: refreshTip,

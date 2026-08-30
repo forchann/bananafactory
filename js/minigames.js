@@ -1102,5 +1102,18 @@
   MG.open = open;
   MG.close = close;
   MG.img = img;
+
+  /* Exposé pour js/minigames2.js : les minijeux ajoutés par le Grand Patch
+     réutilisent exactement le même cycle de vie (minuteries et boucles de
+     rendu enregistrées ici, donc nettoyées automatiquement à la sortie). */
+  MG.define = define;
+  MG.hud = hud;
+  MG.helpText = helpText;
+  MG.every = every;
+  MG.after = after;
+  MG.loop = loop;
+  MG.onKey = onKey;
+  MG.drawSprite = drawSprite;
+
   global.MG = MG;
 })(window);

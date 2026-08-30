@@ -95,7 +95,7 @@
       target: 25, value: function (S) { return S.raresFound; }, reward: { tokens: 25, rare: 'momie' } },
     { id: 'coll4', cat: 'Collection', name: 'Conservateur du Musée', desc: "Trouver 40 bananes rares différentes.",
       target: 40, value: function (S) { return S.raresFound; }, reward: { tokens: 60, rare: 'temporelle' } },
-    { id: 'coll5', cat: 'Collection', name: 'Album Complet', desc: "Trouver les 54 bananes rares. Le Graal.",
+    { id: 'coll5', cat: 'Collection', name: 'Premier Album', desc: "Trouver 54 bananes rares différentes. La moitié du chemin.",
       target: 54, value: function (S) { return S.raresFound; }, reward: { tokens: 300, seeds: 250 } },
     { id: 'coll6', cat: 'Collection', name: "Chasseur d'Épiques", desc: "Posséder 8 bananes épiques.",
       target: 8, value: function (S) { return countRarity(S, 'epique'); }, reward: { tokens: 20 } },
