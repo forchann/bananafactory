@@ -59,6 +59,54 @@
     var stats = U.el('div');
     node.appendChild(stats);
 
+    /* ---------------------------------------------------- automatisation */
+    var autoBox = U.el('div', 'auto-box');
+    var autoHead = U.el('div', 'auto-head');
+    autoHead.appendChild(U.el('b', null, 'Automatisation'));
+    var master = U.el('button', 'btn small', 'Tout activer');
+    U.on(master, 'click', function () {
+      var cfg = P.auto();
+      /* Si tout est déjà actif, le bouton fait l'inverse. */
+      var tout = AUTOS.every(function (o) { return cfg[o.cle]; });
+      AUTOS.forEach(function (o) { cfg[o.cle] = !tout; });
+      sfx('upgrade');
+      UI.refreshAll();
+    });
+    autoHead.appendChild(master);
+    autoBox.appendChild(autoHead);
+
+    var AUTOS = [
+      { cle: 'eggs', label: 'Acheter les œufs', aide: 'garde 60 jetons de côté' },
+      { cle: 'hatch', label: 'Faire éclore', aide: 'dès qu\'un œuf arrive' },
+      { cle: 'breed', label: 'Fusionner', aide: 'choisit le meilleur couple' },
+      { cle: 'collect', label: 'Accueillir les petits', aide: 'dès la fin de la couvaison' },
+      { cle: 'team', label: 'Équipe optimale', aide: 'place toujours les plus forts' }
+    ];
+
+    var autoGrid = U.el('div', 'auto-grid');
+    var autoLignes = AUTOS.map(function (o) {
+      var l = U.el('label', 'toggle auto-toggle');
+      var input = U.el('input');
+      input.type = 'checkbox';
+      U.on(input, 'change', function () {
+        P.auto()[o.cle] = input.checked;
+        if (input.checked) sfx('upgrade');
+        UI.refreshAll();
+      });
+      l.appendChild(input);
+      var txt = U.el('div');
+      txt.appendChild(U.el('b', null, o.label));
+      txt.appendChild(U.el('span', 'auto-aide', o.aide));
+      l.appendChild(txt);
+      autoGrid.appendChild(l);
+      return { o: o, input: input };
+    });
+    autoBox.appendChild(autoGrid);
+
+    var autoNote = U.el('div', 'auto-note');
+    autoBox.appendChild(autoNote);
+    node.appendChild(autoBox);
+
     /* ------------------------------------------------------------ œufs */
     var eggBox = U.el('div', 'card nest-card');
     eggBox.appendChild(U.icon('assets/upgrades/oeuf.png', 'card-icon'));
@@ -77,10 +125,13 @@
     U.on(hatchEgg, 'click', function () {
       var res = P.hatch();
       if (!res) return;
-      sfx(res.pet.isNew ? 'rare' : 'good', { rarity: 'rare' });
-      UI.toast(res.pet.isNew ? 'Nouvelle espèce !' : 'Éclosion',
-        res.species.name + ' — ' + global.describePetEffects(res.species), res.species.icon,
-        res.pet.isNew ? 'rare' : '');
+      /* Les nouveautés sont annoncées par l'écouteur d'événements, qui couvre
+         aussi les éclosions automatiques : ici on ne signale que les doublons. */
+      if (!res.pet.isNew) {
+        sfx('good');
+        UI.toast('Éclosion', res.species.name + ' — ' + global.describePetEffects(res.species),
+          res.species.icon);
+      }
       UI.refreshAll();
     });
     eggRow.appendChild(buyEgg);
@@ -91,6 +142,16 @@
 
     /* ------------------------------------------------------------- nid */
     var nestHead = head('Chambre de fusion', "Deux parents, un petit, et beaucoup de patience.");
+    var fastBtn = U.el('button', 'btn small', 'Fusion rapide');
+    fastBtn.title = "Lance aussitôt le meilleur couple disponible, sans rien sélectionner.";
+    U.on(fastBtn, 'click', function () {
+      if (P.breedBest()) { sfx('feature'); UI.refreshAll(); return; }
+      sfx('error');
+      UI.toast('Fusion impossible',
+        "Il faut deux animaux hors équipe, assez de bananes, et aucune couvaison en cours.",
+        'assets/upgrades/fusion.png');
+    });
+    nestHead.appendChild(fastBtn);
     node.appendChild(nestHead);
     var nestBox = U.el('div');
     node.appendChild(nestBox);
@@ -222,10 +283,11 @@
           U.on(collect, 'click', function () {
             var res = P.collectNest();
             if (!res) return;
-            sfx('rare', { rarity: 'legendaire' });
-            UI.toast(res.isNew ? 'Nouvelle espèce !' : 'Naissance',
-              res.species.name + ' — ' + global.describePetEffects(res.species),
-              res.species.icon, 'rare');
+            if (!res.isNew) {
+              sfx('good');
+              UI.toast('Naissance', res.species.name + ' — ' + global.describePetEffects(res.species),
+                res.species.icon);
+            }
             nestSig = ''; zooSig = '';
             UI.refreshAll();
           });
@@ -261,6 +323,26 @@
       node: node,
       update: function () {
         var st = G.S.pets;
+        var cfg = P.auto();
+
+        /* --- automatisation --- */
+        var fusionPrete = !!G.S.features.breeding;
+        var actifs = 0;
+        autoLignes.forEach(function (l) {
+          /* Fusionner et accueillir n'ont de sens qu'une fois la Chambre bâtie. */
+          var dispo = (l.o.cle === 'breed' || l.o.cle === 'collect') ? fusionPrete : true;
+          l.input.checked = !!cfg[l.o.cle];
+          l.input.disabled = !dispo;
+          l.input.parentNode.classList.toggle('indispo', !dispo);
+          if (cfg[l.o.cle]) actifs++;
+        });
+        master.textContent = actifs === AUTOS.length ? 'Tout couper' : 'Tout activer';
+        autoNote.textContent = actifs === 0
+          ? "Rien d'automatique : vous gardez la main sur chaque étape."
+          : actifs + (actifs > 1 ? ' automatismes actifs' : ' automatisme actif') +
+            " · les animaux de l'équipe ne sont jamais fusionnés.";
+
+        fastBtn.classList.toggle('hidden', !fusionPrete || !!st.nest);
 
         stats.innerHTML = '';
         stats.appendChild(statGrid([
@@ -956,6 +1038,20 @@
   }
 
   /* ==================================================================== */
+
+  /*
+   * Une seule annonce par espèce inédite, quelle que soit son origine : œuf
+   * ouvert à la main, éclosion automatique ou naissance en couvaison. Les
+   * doublons restent signalés par le bouton qui les a produits, sinon
+   * l'automatisation inonderait l'écran.
+   */
+  G.on('pets', function (e) {
+    if (e.kind !== 'gain' || !e.isNew || !e.species) return;
+    sfx('rare', { rarity: 'legendaire' });
+    UI.toast('Nouvelle espèce !',
+      e.species.name + ' — ' + global.describePetEffects(e.species),
+      e.species.icon, 'rare');
+  });
 
   UI.registerTab({
     id: 'nurserie', label: 'Nurserie', icon: 'assets/upgrades/nurserie.png',

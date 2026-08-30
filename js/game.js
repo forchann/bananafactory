@@ -3,7 +3,7 @@
   'use strict';
 
   var SAVE_KEY = 'bananafactory.save';
-  var SAVE_VERSION = 2;
+  var SAVE_VERSION = 3;
   var TICK_MS = 50;
 
   /* ====================================================== ÉTAT INITIAL === */
@@ -44,7 +44,9 @@
         team: [],           // uid des animaux actifs
         nest: null,         // fusion en cours { a, b, result, until }
         eggs: 0,
-        discovered: {}      // id d'espèce -> true (album de la Nurserie)
+        discovered: {},     // id d'espèce -> true (album de la Nurserie)
+        /* Automatisation : la Nurserie peut tourner sans intervention. */
+        auto: { eggs: false, hatch: false, breed: false, collect: false, team: false }
       },
 
       stats: {
@@ -967,6 +969,7 @@
       acc = 0;
       maybeRare('tick');
       autobuyStep();
+      if (global.PETS && global.PETS.autoStep) global.PETS.autoStep();
       updateContracts();
     }
 
@@ -1072,8 +1075,30 @@
     });
     if (!Array.isArray(raw.pets.owned)) raw.pets.owned = [];
     if (!Array.isArray(raw.pets.team)) raw.pets.team = [];
+    if (!raw.pets.auto || typeof raw.pets.auto !== 'object') raw.pets.auto = fresh.pets.auto;
+    for (var ak in fresh.pets.auto) {
+      if (raw.pets.auto[ak] === undefined) raw.pets.auto[ak] = fresh.pets.auto[ak];
+    }
     if (!raw.skins.owned.classique) raw.skins.owned.classique = true;
     if (!global.SKIN_BY_ID[raw.skins.active]) raw.skins.active = 'classique';
+
+    /*
+     * Correctif v3 — six défis du patch réutilisaient un identifiant déjà pris
+     * (prod9, prod10, coll6 à coll9). CHALLENGE_BY_ID n'en gardait qu'un et le
+     * drapeau « encaissé » était commun aux deux : l'un devenait inclicable et
+     * la récompense de l'autre — dont la Banane Éternelle de « Chasseur de
+     * Légendes » — était perdue.
+     *
+     * Les identifiants du patch ont été renommés. On remet ici les six drapeaux
+     * ambigus à zéro : le joueur peut réclamer ce qu'il n'a pas pu obtenir. Un
+     * défi déjà légitimement accompli se ré-encaisse en un clic, ce qui est
+     * préférable à une récompense définitivement perdue.
+     */
+    if ((raw.version || 1) < 3 && raw.challenges) {
+      ['prod9', 'prod10', 'coll6', 'coll7', 'coll8', 'coll9'].forEach(function (id) {
+        delete raw.challenges[id];
+      });
+    }
 
     raw.version = SAVE_VERSION;
     return raw;

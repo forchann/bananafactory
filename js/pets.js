@@ -301,6 +301,111 @@
     return res;
   }
 
+  /* ====================================================== AUTOMATISATION = */
+
+  /*
+   * La Nurserie peut tourner seule. Chaque interrupteur est indépendant : on
+   * peut n'automatiser que la collecte et continuer à choisir ses couples.
+   *
+   * Deux règles de sûreté qui ne se règlent pas :
+   *   - un animal de l'ÉQUIPE n'est jamais fusionné, donc jamais consommé par
+   *     l'automatisation ;
+   *   - l'achat d'œufs garde une réserve de jetons, pour ne pas vider la
+   *     bourse dont dépendent la Chambre de Mutation et le Marché.
+   */
+  var RESERVE_JETONS = 60;
+
+  function auto() { return S().pets.auto; }
+
+  /* Valeur d'un animal, pour classer l'équipe : le palier prime, puis la
+     somme brute de ses bonus. */
+  function petScore(pet) {
+    var sp = global.PET_BY_ID[pet.id];
+    if (!sp) return -1;
+    var somme = 0;
+    for (var i = 0; i < sp.effects.length; i++) somme += sp.effects[i].value;
+    return global.petTierIndex(sp.tier) * 100000 + somme;
+  }
+
+  /* Les meilleurs animaux du domaine, du plus fort au plus faible. */
+  function ranked() {
+    return S().pets.owned.slice().sort(function (a, b) { return petScore(b) - petScore(a); });
+  }
+
+  /* Place d'office les meilleurs animaux dans l'équipe. */
+  function autoTeam() {
+    var st = S().pets;
+    var voulu = ranked().slice(0, teamSize()).map(function (p) { return p.uid; });
+    if (voulu.join(',') === st.team.join(',')) return false;
+    st.team = voulu;
+    G().recompute();
+    return true;
+  }
+
+  /*
+   * Choisit le meilleur couple à fusionner, par ordre de préférence :
+   *   1. une recette dont le résultat est encore inconnu — le vrai progrès ;
+   *   2. une recette connue, qui fait quand même monter d'un palier ;
+   *   3. deux animaux de la même espèce (40 % de chance de monter) ;
+   *   4. les deux plus communs, pour faire de la place.
+   * Les animaux de l'équipe sont exclus du bassin.
+   */
+  function bestPair() {
+    var st = S().pets;
+    var pool = st.owned.filter(function (p) { return st.team.indexOf(p.uid) < 0; });
+    if (pool.length < 2) return null;
+
+    var meilleur = null;
+    function proposer(a, b, rang) {
+      if (meilleur && meilleur.rang <= rang) return;
+      meilleur = { a: a, b: b, rang: rang };
+    }
+
+    for (var i = 0; i < pool.length; i++) {
+      for (var j = i + 1; j < pool.length; j++) {
+        var a = pool[i], b = pool[j];
+        var recette = global.petRecipeFor(a.id, b.id);
+        if (recette) proposer(a, b, st.discovered[recette] ? 2 : 1);
+        else if (a.id === b.id) proposer(a, b, 3);
+        else proposer(a, b, 4);
+      }
+    }
+    if (!meilleur) return null;
+
+    /* Au rang 4 on préfère sacrifier les plus communs. */
+    if (meilleur.rang === 4) {
+      var faibles = pool.slice().sort(function (x, y) { return petScore(x) - petScore(y); });
+      meilleur = { a: faibles[0], b: faibles[1], rang: 4 };
+    }
+    return meilleur;
+  }
+
+  /* Lance la meilleure fusion possible. Sert aussi au bouton « Fusion rapide ». */
+  function breedBest() {
+    if (!S().features.breeding || S().pets.nest) return null;
+    var paire = bestPair();
+    if (!paire) return null;
+    if (G().S.bananas < breedCost(paire.a, paire.b)) return null;
+    return startBreed(paire.a.uid, paire.b.uid);
+  }
+
+  /* Appelé une fois par seconde par la boucle de jeu. */
+  function autoStep() {
+    if (!S().features.pets) return;
+    var cfg = auto();
+    if (!cfg) return;
+
+    /* On récupère avant de relancer : le petit peut servir de parent. */
+    if (cfg.collect) {
+      var p = nestProgress();
+      if (p && p.ready) collectNest();
+    }
+    if (cfg.eggs && S().tokens - eggCost() >= RESERVE_JETONS) buyEgg();
+    if (cfg.hatch && S().pets.eggs > 0) hatch();
+    if (cfg.team) autoTeam();
+    if (cfg.breed) breedBest();
+  }
+
   /* ============================================================== API === */
 
   global.PETS = {
@@ -312,6 +417,8 @@
     speciesCount: speciesCount,
     breedCost: breedCost, breedMs: breedMs, preview: preview,
     startBreed: startBreed, nestProgress: nestProgress,
+    auto: auto, autoStep: autoStep, autoTeam: autoTeam,
+    bestPair: bestPair, breedBest: breedBest, ranked: ranked,
     rushCost: rushCost, rushNest: rushNest, collectNest: collectNest
   };
 })(window);

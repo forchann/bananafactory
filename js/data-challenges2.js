@@ -31,9 +31,9 @@
       target: 1e30, value: function (S) { return S.totalBananas; }, reward: { tokens: 1200, rare: 'neant' } },
 
     // ---------------------------------------------------------- PRODUCTION
-    { id: 'prod9', cat: 'Production', name: 'Jusqu\'au Bout', desc: "Posséder au moins un exemplaire des 21 producteurs.",
+    { id: 'prod_tousgens', cat: 'Production', name: 'Jusqu\'au Bout', desc: "Posséder au moins un exemplaire des 21 producteurs.",
       target: 21, value: distinctGens, reward: { tokens: 120 } },
-    { id: 'prod10', cat: 'Production', name: 'Démesure', desc: "Posséder 200 exemplaires d'un même producteur.",
+    { id: 'prod_demesure', cat: 'Production', name: 'Démesure', desc: "Posséder 200 exemplaires d'un même producteur.",
       target: 200, value: function (S) {
         var m = 0;
         global.GENERATORS.forEach(function (g) { m = Math.max(m, S.gens[g.id] || 0); });
@@ -43,13 +43,13 @@
       target: 1, value: function (S) { return S.gens.origine || 0; }, reward: { tokens: 300 } },
 
     // -------------------------------------------------------- COLLECTION
-    { id: 'coll6', cat: 'Collection', name: 'Second Souffle', desc: "Trouver 75 bananes rares différentes.",
+    { id: 'coll_75', cat: 'Collection', name: 'Second Souffle', desc: "Trouver 75 bananes rares différentes.",
       target: 75, value: function (S) { return S.raresFound; }, reward: { tokens: 220 } },
-    { id: 'coll7', cat: 'Collection', name: 'Presque Tout', desc: "Trouver 95 bananes rares différentes.",
+    { id: 'coll_95', cat: 'Collection', name: 'Presque Tout', desc: "Trouver 95 bananes rares différentes.",
       target: 95, value: function (S) { return S.raresFound; }, reward: { tokens: 400, rare: 'souveraine' } },
-    { id: 'coll8', cat: 'Collection', name: 'Album Intégral', desc: "Trouver les 108 bananes rares. Le vrai Graal.",
+    { id: 'coll_108', cat: 'Collection', name: 'Album Intégral', desc: "Trouver les 108 bananes rares. Le vrai Graal.",
       target: 108, value: function (S) { return S.raresFound; }, reward: { tokens: 900, seeds: 400 } },
-    { id: 'coll9', cat: 'Collection', name: 'Au-delà du Mythe', desc: "Posséder une banane Cosmique.",
+    { id: 'coll_cosmique', cat: 'Collection', name: 'Au-delà du Mythe', desc: "Posséder une banane Cosmique.",
       target: 1, value: function (S) {
         var n = 0;
         global.RARES.forEach(function (r) { if (r.rarity === 'cosmique' && S.rares[r.id]) n++; });
@@ -127,7 +127,19 @@
       target: 25000, value: function (S) { return S.totalSeeds; }, reward: { tokens: 700, seeds: 250 } }
   ];
 
+  /*
+   * Un identifiant déjà pris écraserait le défi d'origine dans
+   * CHALLENGE_BY_ID, et les deux se partageraient le même drapeau
+   * « encaissé » : l'un devient inclicable, la récompense de l'autre est
+   * perdue. On refuse la collision au lieu de la subir en silence.
+   */
   EXTRA.forEach(function (c) {
+    if (global.CHALLENGE_BY_ID[c.id]) {
+      if (global.console) {
+        console.error('Banana Factory : défi ignoré, identifiant déjà utilisé — ' + c.id);
+      }
+      return;
+    }
     c.index = global.CHALLENGES.length;
     global.CHALLENGES.push(c);
     global.CHALLENGE_BY_ID[c.id] = c;

@@ -98,6 +98,7 @@ Un œuf de la jungle donne un animal commun, parfois mieux. À partir de là, to
 
 * sept paliers de rareté, du Commun au Primordial ;
 * seuls les animaux placés dans l'**équipe** donnent leur bonus ;
+* la Nurserie s'**automatise entièrement** : achat d'œufs, éclosion, fusion, collecte des petits et composition de l'équipe. Un animal placé dans l'équipe n'est jamais fusionné, et l'achat d'œufs garde une réserve de jetons ;
 * l'équipe s'agrandit jusqu'à quatre emplacements avec les Graines d'Or ;
 * la couvaison prend du temps réel — de 90 secondes à 45 minutes selon le palier ;
 * trois bananes rares ne s'obtiennent qu'en élevant.
@@ -159,6 +160,8 @@ L'univers du jeu repose entièrement sur **313 sprites Pixel Art** générés av
 **Aucun emoji ni forme dessinée à la volée** : les symboles de la machine à sous, la roue de la roulette, les cartes du 21 Bananes, les six cochons de course et leur piste, les cageots, le serpent, la bombe du Ninja, le comptoir du bar et les trous des chapardeurs sont tous de véritables sprites.
 
 Les 192 illustrations du Grand Patch sont générées avec le modèle **Pixen**, plus net sur les petits sprites. Leurs descriptions sont conservées dans `tools/sprite-prompts.tsv` : tout le rendu du patch peut être régénéré à l'identique.
+
+Le **titre du jeu** utilise une police pixel générée avec PixelLab (`assets/fonts/bananapixel.ttf`, glyphes natifs de 16 px). C'est une vraie police et non une image : le titre reste net à toute taille, se redimensionne et demeure lisible par les lecteurs d'écran.
 
 Les ressources peuvent être utilisées localement afin de permettre au jeu de fonctionner hors-ligne, avec un système de cache et un système de secours graphique si les images ne sont pas disponibles.
 
